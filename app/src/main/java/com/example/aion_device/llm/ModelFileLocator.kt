@@ -14,10 +14,14 @@ object ModelFileLocator {
     )
 
     fun resolveBestModelFile(context: Context): File? {
+        val internalModelDir = File(context.filesDir, "models")
         val externalRoot = context.getExternalFilesDir(null)
         val modelDir = externalRoot?.resolve("models")
 
         val candidates = buildList {
+            addAll(preferredFileNames.map { File(internalModelDir, it) })
+            internalModelDir.listFiles()?.let(::addAll)
+
             if (modelDir != null) {
                 addAll(preferredFileNames.map { File(modelDir, it) })
                 modelDir.listFiles()?.let(::addAll)
@@ -29,7 +33,7 @@ object ModelFileLocator {
         }
 
         return candidates
-            .filter { it.exists() && it.isFile && it.length() > 50L * 1024L * 1024L }
+            .filter { it.exists() && it.isFile && it.length() > 5L * 1024L * 1024L }
             .sortedWith(
                 compareByDescending<File> { it.extension.equals("task", ignoreCase = true) }
                     .thenByDescending { it.length() }

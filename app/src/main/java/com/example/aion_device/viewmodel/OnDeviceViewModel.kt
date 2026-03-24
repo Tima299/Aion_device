@@ -75,19 +75,19 @@ class OnDeviceViewModel(
         }
     }
 
-    fun dismissError() {
-        _uiState.update { it.copy(latestError = null) }
-    }
-
     fun cancelGeneration() {
         inferenceManager.cancelActiveRequest()
         _uiState.update {
             it.copy(
                 isGenerating = false,
                 activeRequestId = null,
-                latestInfo = "Generation canceled.",
+                latestInfo = "Generation cancelled.",
             )
         }
+    }
+
+    fun dismissError() {
+        _uiState.update { it.copy(latestError = null) }
     }
 
     fun refreshModelState() {
