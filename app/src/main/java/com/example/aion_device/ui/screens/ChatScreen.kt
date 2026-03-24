@@ -14,8 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.aion_device.ui.components.AvatarAchievementHeader
 import com.example.aion_device.ui.components.ChatBubble
@@ -44,6 +45,7 @@ fun ChatScreen(
     onCancelGeneration: () -> Unit,
 ) {
     val listState = rememberLazyListState()
+
     val quickPrompts = remember {
         listOf(
             "Explain this Android code clearly",
@@ -53,7 +55,7 @@ fun ChatScreen(
         )
     }
 
-    LaunchedEffect(state.messages.size, state.messages.lastOrNull()?.text) {
+    LaunchedEffect(state.messages.size) {
         if (state.messages.isNotEmpty()) {
             listState.animateScrollToItem(state.messages.lastIndex)
         }
@@ -74,27 +76,31 @@ fun ChatScreen(
             achievementLabel = "Avatar slot ready for my_photo.png",
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            quickPrompts.take(2).forEach { prompt ->
-                AssistChip(
-                    onClick = { onUseQuickPrompt(prompt) },
-                    label = { Text(prompt) },
-                )
-            }
-        }
+        // Safer responsive quick prompts without FlowRow/BoxWithConstraints
+        quickPrompts.chunked(2).forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                rowItems.forEach { prompt ->
+                    AssistChip(
+                        onClick = { onUseQuickPrompt(prompt) },
+                        modifier = Modifier.weight(1f),
+                        label = {
+                            Text(
+                                text = prompt,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        },
+                    )
+                }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            quickPrompts.drop(2).forEach { prompt ->
-                AssistChip(
-                    onClick = { onUseQuickPrompt(prompt) },
-                    label = { Text(prompt) },
-                )
+                if (rowItems.size == 1) {
+                    androidx.compose.foundation.layout.Spacer(
+                        modifier = Modifier.weight(1f)
+                    )
+                }
             }
         }
 
@@ -112,11 +118,13 @@ fun ChatScreen(
             }
         }
 
-        Text(
-            text = state.latestInfo ?: "",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (!state.latestInfo.isNullOrBlank()) {
+            Text(
+                text = state.latestInfo,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -152,7 +160,7 @@ fun ChatScreen(
                 modifier = Modifier.size(56.dp),
             ) {
                 Icon(
-                    imageVector = if (state.isGenerating) Icons.Default.StopCircle else Icons.AutoMirrored.Filled.Send,
+                    imageVector = if (state.isGenerating) Icons.Default.Close else Icons.AutoMirrored.Filled.Send,
                     contentDescription = if (state.isGenerating) "Stop" else "Send",
                 )
             }
