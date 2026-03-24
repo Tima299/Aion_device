@@ -20,6 +20,7 @@ fun AionNav() {
         onRefreshModel = viewModel::refreshModelState,
         onImportModel = viewModel::importModelFromUri,
         onClearChat = viewModel::clearChat,
+        onCancelGeneration = viewModel::cancelGeneration,
         onDismissError = viewModel::dismissError,
     )
 }

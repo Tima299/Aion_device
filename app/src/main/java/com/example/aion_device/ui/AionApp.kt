@@ -38,6 +38,7 @@ fun AionApp(
     onRefreshModel: () -> Unit,
     onImportModel: (Uri) -> Unit,
     onClearChat: () -> Unit,
+    onCancelGeneration: () -> Unit,
     onDismissError: () -> Unit,
 ) {
     var currentTab by rememberSaveable { mutableStateOf(AppTab.CHAT) }
@@ -93,6 +94,7 @@ fun AionApp(
                 onSendClicked = onSendClicked,
                 onUseQuickPrompt = onUseQuickPrompt,
                 onClearChat = onClearChat,
+                onCancelGeneration = onCancelGeneration,
             )
 
             AppTab.STATUS -> StatusScreen(

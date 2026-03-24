@@ -79,6 +79,17 @@ class OnDeviceViewModel(
         _uiState.update { it.copy(latestError = null) }
     }
 
+    fun cancelGeneration() {
+        inferenceManager.cancelActiveRequest()
+        _uiState.update {
+            it.copy(
+                isGenerating = false,
+                activeRequestId = null,
+                latestInfo = "Generation canceled.",
+            )
+        }
+    }
+
     fun refreshModelState() {
         val modelFile = ModelFileLocator.resolveBestModelFile(getApplication())
         if (modelFile == null) {
@@ -299,7 +310,7 @@ class OnDeviceViewModel(
     }
 
     override fun onCleared() {
-        inferenceManager.close()
+        inferenceManager.dispose()
         super.onCleared()
     }
 }

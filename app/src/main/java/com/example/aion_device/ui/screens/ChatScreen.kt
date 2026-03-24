@@ -4,14 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +15,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.DeleteSweep
+import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -44,6 +41,7 @@ fun ChatScreen(
     onSendClicked: () -> Unit,
     onUseQuickPrompt: (String) -> Unit,
     onClearChat: () -> Unit,
+    onCancelGeneration: () -> Unit,
 ) {
     val listState = rememberLazyListState()
     val quickPrompts = remember {
@@ -55,7 +53,7 @@ fun ChatScreen(
         )
     }
 
-    LaunchedEffect(state.messages.size) {
+    LaunchedEffect(state.messages.size, state.messages.lastOrNull()?.text) {
         if (state.messages.isNotEmpty()) {
             listState.animateScrollToItem(state.messages.lastIndex)
         }
@@ -150,13 +148,12 @@ fun ChatScreen(
             }
 
             FilledIconButton(
-                onClick = onSendClicked,
+                onClick = if (state.isGenerating) onCancelGeneration else onSendClicked,
                 modifier = Modifier.size(56.dp),
-                enabled = !state.isGenerating,
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "Send",
+                    imageVector = if (state.isGenerating) Icons.Default.StopCircle else Icons.AutoMirrored.Filled.Send,
+                    contentDescription = if (state.isGenerating) "Stop" else "Send",
                 )
             }
         }
