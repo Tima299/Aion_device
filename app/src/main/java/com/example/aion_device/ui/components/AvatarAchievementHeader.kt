@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -32,9 +31,7 @@ import androidx.compose.ui.res.painterResource
 
 @Composable
 fun AvatarAchievementHeader(
-    title: String,
-    subtitle: String,
-    achievementLabel: String,
+    name: String,
 ) {
     val context = LocalContext.current
     val avatarResId = remember {
@@ -76,7 +73,7 @@ fun AvatarAchievementHeader(
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Person,
-                                contentDescription = "Profile placeholder",
+                                contentDescription = null,
                                 modifier = Modifier.size(36.dp),
                             )
                         }
@@ -92,31 +89,18 @@ fun AvatarAchievementHeader(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Verified,
-                        contentDescription = "Accomplished badge",
+                        contentDescription = null,
                         modifier = Modifier.padding(6.dp),
                         tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    text = achievementLabel,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+            Text(
+                text = name,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
         }
     }
 }

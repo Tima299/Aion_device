@@ -4,10 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledIconButton
@@ -26,9 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.aion_device.ui.components.AvatarAchievementHeader
 import com.example.aion_device.ui.components.ChatBubble
@@ -40,20 +41,10 @@ fun ChatScreen(
     contentPadding: PaddingValues,
     onInputChanged: (String) -> Unit,
     onSendClicked: () -> Unit,
-    onUseQuickPrompt: (String) -> Unit,
     onClearChat: () -> Unit,
     onCancelGeneration: () -> Unit,
 ) {
     val listState = rememberLazyListState()
-
-    val quickPrompts = remember {
-        listOf(
-            "Explain this Android code clearly",
-            "Summarize my plan in bullet points",
-            "Rewrite this into a professional email",
-            "Give me a step-by-step debugging checklist",
-        )
-    }
 
     LaunchedEffect(state.messages.size) {
         if (state.messages.isNotEmpty()) {
@@ -70,39 +61,10 @@ fun ChatScreen(
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+
         AvatarAchievementHeader(
-            title = "AION Device",
-            subtitle = "Private on-device AI assistant",
-            achievementLabel = "Avatar slot ready for my_photo.png",
+            name = "Temur Eshboyev"
         )
-
-        // Safer responsive quick prompts without FlowRow/BoxWithConstraints
-        quickPrompts.chunked(2).forEach { rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                rowItems.forEach { prompt ->
-                    AssistChip(
-                        onClick = { onUseQuickPrompt(prompt) },
-                        modifier = Modifier.weight(1f),
-                        label = {
-                            Text(
-                                text = prompt,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        },
-                    )
-                }
-
-                if (rowItems.size == 1) {
-                    androidx.compose.foundation.layout.Spacer(
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-        }
 
         LazyColumn(
             modifier = Modifier.weight(1f),
@@ -143,16 +105,9 @@ fun ChatScreen(
             ElevatedButton(
                 onClick = onClearChat,
                 modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.elevatedButtonColors(),
             ) {
-                Icon(
-                    imageVector = Icons.Default.DeleteSweep,
-                    contentDescription = "Clear chat",
-                )
-                Text(
-                    text = "Clear",
-                    modifier = Modifier.padding(start = 8.dp),
-                )
+                Icon(Icons.Default.DeleteSweep, contentDescription = null)
+                Text("Clear", modifier = Modifier.padding(start = 8.dp))
             }
 
             FilledIconButton(
@@ -160,8 +115,11 @@ fun ChatScreen(
                 modifier = Modifier.size(56.dp),
             ) {
                 Icon(
-                    imageVector = if (state.isGenerating) Icons.Default.Close else Icons.AutoMirrored.Filled.Send,
-                    contentDescription = if (state.isGenerating) "Stop" else "Send",
+                    imageVector = if (state.isGenerating)
+                        Icons.Default.Close
+                    else
+                        Icons.AutoMirrored.Filled.Send,
+                    contentDescription = null,
                 )
             }
         }

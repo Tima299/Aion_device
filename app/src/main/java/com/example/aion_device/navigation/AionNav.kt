@@ -16,7 +16,6 @@ fun AionNav() {
         state = state,
         onInputChanged = viewModel::onInputChanged,
         onSendClicked = viewModel::sendPrompt,
-        onUseQuickPrompt = viewModel::useQuickPrompt,
         onRefreshModel = viewModel::refreshModelState,
         onImportModel = viewModel::importModelFromUri,
         onClearChat = viewModel::clearChat,

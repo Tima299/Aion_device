@@ -34,7 +34,6 @@ fun AionApp(
     state: OnDeviceUiState,
     onInputChanged: (String) -> Unit,
     onSendClicked: () -> Unit,
-    onUseQuickPrompt: (String) -> Unit,
     onRefreshModel: () -> Unit,
     onImportModel: (Uri) -> Unit,
     onClearChat: () -> Unit,
@@ -92,7 +91,6 @@ fun AionApp(
                 contentPadding = padding,
                 onInputChanged = onInputChanged,
                 onSendClicked = onSendClicked,
-                onUseQuickPrompt = onUseQuickPrompt,
                 onClearChat = onClearChat,
                 onCancelGeneration = onCancelGeneration,
             )

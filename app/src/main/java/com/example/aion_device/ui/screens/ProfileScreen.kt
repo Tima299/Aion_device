@@ -38,9 +38,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         AvatarAchievementHeader(
-            title = "My Local AI Build",
-            subtitle = "Put my_photo.png on the left and show the accomplishment clearly",
-            achievementLabel = if (state.modelInfo.isInstalled) "Offline AI accomplished" else "UI accomplished • model pending",
+            name = "Temur Eshboyev"
         )
 
         SectionCard(
